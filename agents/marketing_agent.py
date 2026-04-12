@@ -78,33 +78,23 @@ LaunchMind Team""",
         }
 
     def send_email(self, subject: str, body: str) -> bool:
-        """Send email via SendGrid."""
-        print(f"\n📧 Marketing: Sending email via SendGrid...")
+        """Send email (or mock by printing to console)."""
+        print(f"\n📧 Marketing: Sending email...")
 
-        try:
-            from sendgrid import SendGridAPIClient
-            from sendgrid.helpers.mail import Mail
+        # Mock email - just print to console
+        print(f"\n{'='*70}")
+        print(f"📨 EMAIL SENT (MOCK - Console Output)")
+        print(f"{'='*70}")
+        print(f"TO: {self.sendgrid_to}")
+        print(f"FROM: {self.sendgrid_from}")
+        print(f"SUBJECT: {subject}")
+        print(f"{'='*70}")
+        print(f"\n{body}")
+        print(f"\n{'='*70}")
+        print(f"✅ Email would be sent to: {self.sendgrid_to}")
+        print(f"{'='*70}\n")
 
-            message = Mail(
-                from_email=self.sendgrid_from,
-                to_emails=self.sendgrid_to,
-                subject=subject,
-                html_content=f"<p>{body.replace(chr(10), '<br>')}</p>"
-            )
-
-            sg = SendGridAPIClient(self.sendgrid_api_key)
-            response = sg.send(message)
-
-            if response.status_code == 202:
-                print(f"✅ Email sent successfully")
-                return True
-            else:
-                print(f"⚠️  Email send failed: {response.status_code}")
-                return False
-
-        except Exception as e:
-            print(f"❌ Error sending email: {str(e)}")
-            return False
+        return True
 
     def post_to_slack(self, tagline: str, description: str, pr_url: str) -> bool:
         """Post to Slack using Block Kit."""
