@@ -1,208 +1,172 @@
-"""Engineer Agent - Builds landing page and opens GitHub PR."""
+"""Engineer Agent - Generates landing page, commits to GitHub, opens PR."""
 import json
 import os
-import requests
+import re
 import base64
+import requests
 from base_agent import BaseAgent
 
+
 class EngineerAgent(BaseAgent):
-    """Engineer agent that generates code and manages GitHub interactions."""
+    """Generates HTML, creates GitHub issue, commits code, opens pull request."""
 
     def __init__(self):
         super().__init__("engineer")
-        self.github_token = os.environ.get("GITHUB_TOKEN")
-        self.github_repo = os.environ.get("GITHUB_REPO")
+        self.token = os.environ.get("GITHUB_TOKEN", "")
+        self.repo = os.environ.get("GITHUB_REPO", "")
         self.headers = {
-            "Authorization": f"token {self.github_token}",
-            "Accept": "application/vnd.github+json"
+            "Authorization": f"token {self.token}",
+            "Accept": "application/vnd.github+json",
         }
 
-    def generate_landing_page(self, product_spec: dict) -> str:
-        """Use LLM to generate HTML landing page."""
-        print(f"\n💻 Engineer: Generating landing page HTML...")
+    # ── public entry point ───────────────────────────────────────────────
+    def run(self, product_spec: dict) -> dict:
+        """Generate landing page and push to GitHub. Returns result dict."""
 
-        system_prompt = """You are a web developer. Generate a beautiful, modern HTML landing page.
-Return ONLY the HTML code, no markdown, no explanations.
-Include: header with headline/subheadline, features section, call-to-action button, basic CSS styling."""
+        # 1. Generate HTML via LLM
+        html = self._generate_html(product_spec)
 
-        value_prop = product_spec.get("value_proposition", "Amazing Product")
-        features = product_spec.get("features", [])
-        features_text = "\n".join([f"• {f.get('name', '')}: {f.get('description', '')}"
-                                   for f in features[:5]])
+        # 2. Create GitHub issue
+        issue_url = self._create_issue(product_spec)
 
-        user_prompt = f"""Create a landing page HTML for:
-Title: {value_prop}
+        # 3. Create branch + commit
+        self._create_branch_and_commit(html)
 
-Features:
-{features_text}
+        # 4. Open PR
+        pr_url = self._open_pr(product_spec)
 
-Requirements:
-- Modern, professional design
-- Responsive CSS
-- Clear call-to-action button
-- Feature showcase section
-- Return ONLY valid HTML"""
-
-        response = self.call_llm(system_prompt, user_prompt)
-        return response.strip()
-
-    def create_github_issue(self, title: str, body: str) -> str:
-        """Create a GitHub issue."""
-        print(f"\n📝 Engineer: Creating GitHub issue...")
-
-        url = f"https://api.github.com/repos/{self.github_repo}/issues"
-        data = {
-            "title": title,
-            "body": body
+        return {
+            "html_content": html[:500],
+            "full_html": html,
+            "issue_url": issue_url,
+            "pr_url": pr_url,
+            "branch": "agent-landing-page",
         }
 
+    # ── LLM: generate landing page ──────────────────────────────────────
+    def _generate_html(self, spec: dict) -> str:
+        print(f"   💻 Engineer: generating HTML landing page via LLM...")
+
+        features_md = "\n".join(
+            f"- {f['name']}: {f['description']}" for f in spec.get("features", [])[:5]
+        )
+
+        system_prompt = (
+            "You are a front-end developer. Generate a single, complete HTML file "
+            "(including inline CSS) for a modern landing page. Include: hero with "
+            "headline + subheadline, features section, call-to-action button, footer. "
+            "Return ONLY the HTML — no markdown fences, no explanations."
+        )
+        user_prompt = (
+            f"Product: {spec.get('value_proposition', 'Amazing product')}\n\n"
+            f"Features:\n{features_md}\n\n"
+            "Make it professional, responsive, with a gradient hero section."
+        )
+
+        html = self.call_llm(system_prompt, user_prompt)
+        # Strip markdown fences if present
+        html = re.sub(r'^```html?\s*', '', html, flags=re.MULTILINE)
+        html = re.sub(r'```\s*$', '', html, flags=re.MULTILINE)
+        return html.strip()
+
+    # ── GitHub: create issue ─────────────────────────────────────────────
+    def _create_issue(self, spec: dict) -> str:
+        print(f"   📝 Engineer: creating GitHub issue...")
         try:
-            response = requests.post(url, json=data, headers=self.headers)
-            if response.status_code == 201:
-                issue = response.json()
-                issue_url = issue["html_url"]
-                issue_number = issue["number"]
-                print(f"✅ Issue created: #{issue_number}")
-                return issue_url
-            else:
-                print(f"⚠️  Issue creation failed: {response.status_code}")
-                return f"https://github.com/{self.github_repo}/issues (pending)"
+            r = requests.post(
+                f"https://api.github.com/repos/{self.repo}/issues",
+                headers=self.headers,
+                json={
+                    "title": "Initial landing page",
+                    "body": (
+                        f"## Landing Page\n\n"
+                        f"Auto-generated by EngineerAgent for:\n\n"
+                        f"> {spec.get('value_proposition', 'N/A')}\n\n"
+                        f"### Features\n" +
+                        "\n".join(f"- {f['name']}" for f in spec.get("features", [])[:5])
+                    ),
+                },
+            )
+            if r.status_code == 201:
+                url = r.json()["html_url"]
+                print(f"   ✅ Issue created: {url}")
+                return url
+            print(f"   ⚠️  Issue creation returned {r.status_code}: {r.text[:120]}")
         except Exception as e:
-            print(f"❌ Error creating issue: {str(e)}")
-            return f"https://github.com/{self.github_repo}/issues (error)"
+            print(f"   ❌ Issue error: {e}")
+        return "N/A"
 
-    def create_branch_and_commit(self, html_content: str, branch_name: str = "agent-landing-page") -> bool:
-        """Create a new branch and commit the HTML file."""
-        print(f"\n🔧 Engineer: Creating branch and committing code...")
-
+    # ── GitHub: branch + commit ──────────────────────────────────────────
+    def _create_branch_and_commit(self, html: str):
+        print(f"   🔧 Engineer: creating branch + committing code...")
+        branch = "agent-landing-page"
         try:
-            # Get the default branch (main) SHA
-            repo_url = f"https://api.github.com/repos/{self.github_repo}"
-            repo_response = requests.get(repo_url, headers=self.headers)
-            default_branch = repo_response.json().get("default_branch", "main")
+            # Get default branch SHA
+            repo_info = requests.get(
+                f"https://api.github.com/repos/{self.repo}", headers=self.headers
+            ).json()
+            default_branch = repo_info.get("default_branch", "main")
 
-            # Get the SHA of the default branch
-            ref_url = f"https://api.github.com/repos/{self.github_repo}/git/ref/heads/{default_branch}"
-            ref_response = requests.get(ref_url, headers=self.headers)
-            base_sha = ref_response.json()["object"]["sha"]
+            ref = requests.get(
+                f"https://api.github.com/repos/{self.repo}/git/ref/heads/{default_branch}",
+                headers=self.headers,
+            ).json()
+            sha = ref["object"]["sha"]
 
-            # Create new branch
-            branch_url = f"https://api.github.com/repos/{self.github_repo}/git/refs"
-            branch_data = {
-                "ref": f"refs/heads/{branch_name}",
-                "sha": base_sha
-            }
-            branch_response = requests.post(branch_url, json=branch_data, headers=self.headers)
+            # Create branch
+            requests.post(
+                f"https://api.github.com/repos/{self.repo}/git/refs",
+                headers=self.headers,
+                json={"ref": f"refs/heads/{branch}", "sha": sha},
+            )
 
-            if branch_response.status_code not in [201, 422]:  # 422 means branch already exists
-                print(f"⚠️  Branch creation issue: {branch_response.status_code}")
-                return False
-
-            # Commit the HTML file
-            file_path = "index.html"
-            content_url = f"https://api.github.com/repos/{self.github_repo}/contents/{file_path}"
-
-            content_b64 = base64.b64encode(html_content.encode()).decode()
-            commit_data = {
-                "message": "Add landing page generated by Engineer Agent",
-                "content": content_b64,
-                "branch": branch_name,
-                "committer": {
-                    "name": "EngineerAgent",
-                    "email": "agent@launchmind.ai"
-                }
-            }
-
-            commit_response = requests.put(content_url, json=commit_data, headers=self.headers)
-
-            if commit_response.status_code in [201, 200]:
-                print(f"✅ Code committed to branch {branch_name}")
-                return True
+            # Commit file
+            r = requests.put(
+                f"https://api.github.com/repos/{self.repo}/contents/index.html",
+                headers=self.headers,
+                json={
+                    "message": "Add landing page — generated by EngineerAgent",
+                    "content": base64.b64encode(html.encode()).decode(),
+                    "branch": branch,
+                    "committer": {"name": "EngineerAgent", "email": "agent@launchmind.ai"},
+                },
+            )
+            if r.status_code in (200, 201):
+                print(f"   ✅ Code committed to branch '{branch}'")
             else:
-                print(f"⚠️  Commit failed: {commit_response.status_code}")
-                return False
-
+                print(f"   ⚠️  Commit returned {r.status_code}: {r.text[:120]}")
         except Exception as e:
-            print(f"❌ Error in branch/commit: {str(e)}")
-            return False
+            print(f"   ❌ Branch/commit error: {e}")
 
-    def open_pull_request(self, branch_name: str = "agent-landing-page", pr_title: str = None, pr_body: str = None) -> str:
-        """Open a GitHub pull request."""
-        print(f"\n📤 Engineer: Opening pull request...")
-
+    # ── GitHub: open pull request ────────────────────────────────────────
+    def _open_pr(self, spec: dict) -> str:
+        print(f"   📤 Engineer: opening pull request...")
         try:
-            repo_response = requests.get(f"https://api.github.com/repos/{self.github_repo}", headers=self.headers)
-            default_branch = repo_response.json().get("default_branch", "main")
+            repo_info = requests.get(
+                f"https://api.github.com/repos/{self.repo}", headers=self.headers
+            ).json()
+            default_branch = repo_info.get("default_branch", "main")
 
-            url = f"https://api.github.com/repos/{self.github_repo}/pulls"
-            data = {
-                "title": pr_title or "Initial landing page",
-                "body": pr_body or "Landing page generated by Engineer Agent. Ready for review.",
-                "head": branch_name,
-                "base": default_branch
-            }
-
-            response = requests.post(url, json=data, headers=self.headers)
-
-            if response.status_code == 201:
-                pr = response.json()
-                pr_url = pr["html_url"]
-                pr_number = pr["number"]
-                print(f"✅ PR opened: #{pr_number}")
-                return pr_url
-            else:
-                print(f"⚠️  PR creation failed: {response.status_code}")
-                print(f"   Response: {response.text[:200]}")
-                return f"https://github.com/{self.github_repo}/pulls (pending)"
-
+            r = requests.post(
+                f"https://api.github.com/repos/{self.repo}/pulls",
+                headers=self.headers,
+                json={
+                    "title": "Add initial landing page",
+                    "body": (
+                        f"## Initial Landing Page\n\n"
+                        f"Generated by **EngineerAgent** (LaunchMind MAS).\n\n"
+                        f"**Product:** {spec.get('value_proposition', 'N/A')}\n\n"
+                        f"### Changes\n- `index.html` — full landing page with CSS\n"
+                    ),
+                    "head": "agent-landing-page",
+                    "base": default_branch,
+                },
+            )
+            if r.status_code == 201:
+                url = r.json()["html_url"]
+                print(f"   ✅ PR opened: {url}")
+                return url
+            print(f"   ⚠️  PR creation returned {r.status_code}: {r.text[:120]}")
         except Exception as e:
-            print(f"❌ Error opening PR: {str(e)}")
-            return f"https://github.com/{self.github_repo}/pulls (error)"
-
-    def run(self):
-        """Main engineer agent logic."""
-        print(f"\n{'='*60}")
-        print(f"🏗️  ENGINEER AGENT STARTING")
-        print(f"{'='*60}")
-
-        # Wait for product spec from Product agent
-        while True:
-            messages = self.get_new_messages()
-            for msg in messages:
-                if msg.from_agent == "product" and msg.message_type == "task":
-                    product_spec = msg.payload
-                    print(f"📋 Received product spec")
-
-                    # Generate landing page
-                    html_content = self.generate_landing_page(product_spec)
-
-                    # Create GitHub issue
-                    issue_url = self.create_github_issue(
-                        title="Initial landing page",
-                        body=f"Generated landing page for: {product_spec.get('value_proposition', 'Product')}"
-                    )
-
-                    # Commit and open PR
-                    self.create_branch_and_commit(html_content)
-                    pr_url = self.open_pull_request(
-                        pr_title="Initial landing page",
-                        pr_body=f"Auto-generated landing page for: {product_spec.get('value_proposition', 'Product')}"
-                    )
-
-                    # Send result back to CEO
-                    self.send_message(
-                        to_agent="ceo",
-                        message_type="result",
-                        payload={
-                            "html_content": html_content[:500],  # Truncate for message
-                            "issue_url": issue_url,
-                            "pr_url": pr_url,
-                            "branch": "agent-landing-page"
-                        },
-                        parent_id=msg.message_id
-                    )
-
-                    print(f"✅ Engineer work complete")
-                    print(f"   Issue: {issue_url}")
-                    print(f"   PR: {pr_url}")
-                    return
+            print(f"   ❌ PR error: {e}")
+        return "N/A"
