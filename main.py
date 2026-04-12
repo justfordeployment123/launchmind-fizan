@@ -29,11 +29,10 @@ from agents.qa_agent import QAAgent
 def validate_env():
     """Validate required environment variables."""
     required_vars = [
-        "ANTHROPIC_API_KEY",
+        "OPENAI_API_KEY",
         "GITHUB_TOKEN",
         "GITHUB_REPO",
         "SLACK_BOT_TOKEN",
-        "SENDGRID_API_KEY",
         "SENDGRID_FROM_EMAIL",
         "SENDGRID_TO_EMAIL"
     ]
