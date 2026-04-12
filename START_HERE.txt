@@ -1,0 +1,167 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                     START HERE - SIMPLE 3-STEP GUIDE                      ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+🎯 YOUR MISSION:
+   Get API keys → Create .env file → Run python main.py → Record demo
+
+⏰ TIME: ~15 minutes (mostly copy-paste)
+
+════════════════════════════════════════════════════════════════════════════════
+
+📋 STEP 1: GET API KEYS (Use the links in API_KEYS_LINKS.md)
+
+✅ OpenAI (You already have this!)
+   → Just copy your existing OpenAI API key
+   → Format: sk-proj-xxxxx
+
+📍 GitHub Token
+   → Link: https://github.com/settings/tokens
+   → Click "Generate new token"
+   → Scopes: ✅ repo, ✅ workflow
+   → Copy it (starts with ghp_)
+
+📍 Slack Bot Token
+   → Link: https://api.slack.com/apps
+   → Create new app → From scratch
+   → Name: LaunchMind Bot
+   → OAuth & Permissions → Bot Token Scopes:
+      • chat:write
+      • channels:read
+      • channels:join
+   → Install → Copy token (starts with xoxb-)
+   → Also: Create #launches channel, invite bot
+
+📍 SendGrid API Key
+   → Link: https://sendgrid.com/signup
+   → Free account, create API key
+   → Verify sender: muhammadfaiza9876@gmail.com
+   → Copy key (starts with SG.)
+
+════════════════════════════════════════════════════════════════════════════════
+
+✍️ STEP 2: CREATE .env FILE
+
+In /Users/muhammadfizantariq/Documents/agentic/launchmind/ create a file
+named ".env" with these 7 lines (replace xxxxx with your actual keys):
+
+OPENAI_API_KEY=sk-proj-xxxxx
+GITHUB_TOKEN=ghp_xxxxx
+GITHUB_REPO=justfordeployment123/launchmind-fizan
+SLACK_BOT_TOKEN=xoxb-xxxxx
+SENDGRID_API_KEY=SG.xxxxx
+SENDGRID_FROM_EMAIL=muhammadfaiza9876@gmail.com
+SENDGRID_TO_EMAIL=muhammadfaiza9876@gmail.com
+
+════════════════════════════════════════════════════════════════════════════════
+
+🚀 STEP 3: RUN THE PROGRAM
+
+1. Open terminal
+2. Go to folder:
+   cd /Users/muhammadfizantariq/Documents/agentic/launchmind
+
+3. Install dependencies (first time only):
+   pip install -r requirements.txt
+
+4. Run the system:
+   python main.py
+
+5. Watch the magic happen! ✨
+   - CEO decomposes startup idea
+   - Product generates specs
+   - Engineer creates GitHub PR
+   - Marketing sends email & posts to Slack
+   - QA reviews everything
+   - Full message history printed
+
+════════════════════════════════════════════════════════════════════════════════
+
+✅ VERIFY EVERYTHING WORKED:
+
+After running python main.py, check:
+
+[ ] Terminal shows "✅ BUILD COMPLETE" and all agent messages
+[ ] GitHub: Go to justfordeployment123/launchmind-fizan
+    → Should see 1 Pull Request titled "Initial landing page"
+[ ] Slack: Go to your workspace's #launches channel
+    → Should see message from LaunchMind Bot
+[ ] Email: Check muhammadfaiza9876@gmail.com inbox
+    → Should see email from your SendGrid verified address
+
+════════════════════════════════════════════════════════════════════════════════
+
+🎬 RECORD DEMO VIDEO
+
+Once everything works:
+
+1. Open terminal in launchmind folder
+2. Clear screen: clear
+3. Run: python main.py
+4. Record entire output (use QuickTime, OBS, or similar)
+5. Show:
+   - Full terminal with all agent messages
+   - GitHub PR page
+   - Slack #launches message
+   - Email in inbox
+6. Save as MP4
+7. Upload to YouTube/Google Drive
+8. Get public link
+
+Duration: Should be ~8-10 minutes
+
+════════════════════════════════════════════════════════════════════════════════
+
+📤 SUBMIT ASSIGNMENT
+
+Once demo is recorded, submit:
+
+1. GitHub Repo URL:
+   https://github.com/justfordeployment123/launchmind-fizan
+
+2. Demo Video URL:
+   [Your YouTube or Google Drive link]
+
+3. Team Info:
+   Student: Muhammad Fizan
+   Agents: CEO, Product, Engineer, Marketing, QA (all you)
+
+════════════════════════════════════════════════════════════════════════════════
+
+❓ NEED HELP?
+
+Problem: "API key not found"
+→ Check .env file exists in the right folder
+→ Check spelling of variable names (case-sensitive)
+
+Problem: "Bad credentials" (GitHub)
+→ Copy GitHub token again carefully
+→ Make sure it starts with "ghp_"
+
+Problem: "not_in_channel" (Slack)
+→ Invite bot to #launches: /invite @LaunchMindBot
+
+Problem: "Invalid email" (SendGrid)
+→ Make sure you verified the sender in SendGrid
+→ Check email address matches exactly
+
+See API_KEYS_LINKS.md for detailed troubleshooting
+
+════════════════════════════════════════════════════════════════════════════════
+
+🎯 THAT'S IT!
+
+You have everything built. Just:
+1. Get API keys (13 min)
+2. Create .env (2 min)
+3. Run python main.py (1 min)
+4. Record demo (15 min)
+5. Submit
+
+Total: ~30 minutes total
+
+Good luck! 🚀
+
+════════════════════════════════════════════════════════════════════════════════
