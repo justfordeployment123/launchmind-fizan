@@ -1,7 +1,7 @@
 """Base agent class with LLM integration."""
 import os
 from abc import ABC, abstractmethod
-from anthropic import Anthropic
+from openai import OpenAI
 from message_bus import Message, message_bus
 
 class BaseAgent(ABC):
@@ -9,20 +9,22 @@ class BaseAgent(ABC):
 
     def __init__(self, name: str):
         self.name = name
-        self.client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-        self.model = "claude-haiku-4-5-20251001"
+        self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        self.model = "gpt-4o-mini"  # Fast, affordable model
         self.last_processed_message_id = None
 
     def call_llm(self, system_prompt: str, user_prompt: str) -> str:
-        """Call Claude API."""
+        """Call OpenAI API (GPT-4o mini)."""
         try:
-            response = self.client.messages.create(
+            response = self.client.chat.completions.create(
                 model=self.model,
                 max_tokens=2000,
-                system=system_prompt,
-                messages=[{"role": "user", "content": user_prompt}]
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ]
             )
-            return response.content[0].text
+            return response.choices[0].message.content
         except Exception as e:
             print(f"❌ LLM Error in {self.name}: {str(e)}")
             raise
