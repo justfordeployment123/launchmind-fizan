@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoTest Landing Page</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(to right, #4a90e2, #9013fe);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .feature {
+            background: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin: 15px;
+            padding: 20px;
+            text-align: center;
+            flex: 1 1 200px;
+            max-width: 300px;
+        }
+
+        .feature h3 {
+            margin-top: 0;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .cta button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .cta button:hover {
+            background: #218838;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero">
+        <h1>Streamline Your Testing Process</h1>
+        <p>Save up to 60% of your test case writing time with AutoTest's automatic generation from Python docstrings.</p>
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <h3>Docstring Parsing</h3>
+            <p>Utilizes AST and regex to extract function signatures and parameter information for comprehensive test cases.</p>
+        </div>
+        <div class="feature">
+            <h3>Test Case Generation</h3>
+            <p>Employs NLP and predefined templates to create contextual test cases, ensuring thorough coverage.</p>
+        </div>
+        <div class="feature">
+            <h3>Test Coverage Analysis</h3>
+            <p>Integrates with code analysis tools to highlight testing gaps and suggest additional tests for compliance.</p>
+        </div>
+        <div class="feature">
+            <h3>Customizable Test Configurations</h3>
+            <p>Define custom configurations and templates aligned with your project's testing strategies.</p>
+        </div>
+        <div class="feature">
+            <h3>Continuous Integration Integration</h3>
+            <p>Seamlessly triggers test case generation during CI/CD builds, ensuring up-to-date tests with every code change.</p>
+        </div>
+    </div>
+
+    <div class="cta">
+        <h2>Ready to transform your testing process?</h2>
+        <button>Get Started Now</button>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 AutoTest. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
