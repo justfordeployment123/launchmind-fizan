@@ -172,7 +172,7 @@ def main():
     print(f"  Product Spec   : ✅ generated ({len(product_spec.get('features',[]))} features)")
     print(f"  GitHub Issue   : {issue_url}")
     print(f"  GitHub PR      : {pr_url}")
-    print(f"  Email          : {'✅ sent (mock)' if marketing_result.get('email_sent') else '❌'}")
+    print(f"  Email          : {'✅ sent (real)' if marketing_result.get('email_sent') else '❌ not sent'}")
     print(f"  Slack          : {'✅ posted' if marketing_result.get('slack_posted') else '❌'}")
     print(f"  QA             : {'✅ passed' if passed else '⚠️ issues found'}")
     print(f"  Revision Cycles: {ceo.revision_cycles}")

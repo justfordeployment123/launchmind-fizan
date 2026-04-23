@@ -43,16 +43,26 @@ class CEOAgent(BaseAgent):
         print(f"   🧠 CEO: calling LLM to review {agent_name} output...")
 
         system_prompt = (
-            f"You are a CEO reviewing the {agent_name} agent's work for the "
-            f"startup idea: '{self.startup_idea}'. "
-            "Evaluate quality: is it specific, complete, and actionable? "
-            "Return ONLY valid JSON: {\"acceptable\": true/false, \"feedback\": \"...\"}"
+            f"You are a demanding, detail-oriented startup CEO reviewing the "
+            f"{agent_name} agent's work for the startup idea: '{self.startup_idea}'.\n\n"
+            f"You maintain EXTREMELY HIGH standards. Evaluate against ALL of these criteria — "
+            f"if ANY criterion is weak, you MUST reject:\n"
+            f"1. Every persona pain_point must be SPECIFIC and technical — not vague or generic\n"
+            f"2. Every feature description must mention concrete implementation details "
+            f"(what technologies, what algorithms, what integrations) — not just what it does\n"
+            f"3. The value_proposition must explicitly mention the target user AND the measurable benefit\n"
+            f"4. User stories must have a concrete, measurable 'so that' outcome — not vague benefits\n"
+            f"5. The output must be tightly scoped to the startup idea — no generic filler\n\n"
+            f"You are skeptical by default. Reject unless the work is clearly exceptional on "
+            f"ALL five criteria. When rejecting, give SPECIFIC actionable feedback pointing to "
+            f"exact fields/items that need improvement and what to change.\n\n"
+            f"Return ONLY valid JSON: {{\"acceptable\": true/false, \"feedback\": \"...\"}}"
         )
         user_prompt = json.dumps(output, indent=2)[:3000]
 
         raw = self.call_llm(system_prompt, user_prompt)
-        review = self._parse_json(raw, fallback={"acceptable": True, "feedback": "Looks good overall."})
-        return review.get("acceptable", True), review.get("feedback", "")
+        review = self._parse_json(raw, fallback={"acceptable": False, "feedback": "Could not parse review; requesting revision for safety."})
+        return review.get("acceptable", False), review.get("feedback", "")
 
     # ── Send structured task to another agent ────────────────────────────
     def send_task_to_agent(self, agent_name: str, task: str):
