@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoTest - Streamline Your Testing Process</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(135deg, #6C63FF, #FF6B6B);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5em;
+            margin: 0;
+        }
+        header p {
+            font-size: 1.2em;
+            margin: 10px 0 30px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+        }
+        .feature {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .feature:hover {
+            transform: scale(1.05);
+        }
+        .cta {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .cta button {
+            background: #6C63FF;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .cta button:hover {
+            background: #5b52e6;
+        }
+        footer {
+            background: #f1f1f1;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Streamline Your Testing Process</h1>
+    <p>AutoTest automatically generates comprehensive test cases from Python docstrings, saving you time and ensuring thorough test coverage.</p>
+</header>
+
+<section class="features">
+    <div class="feature">
+        <h2>Automatic Test Case Generation</h2>
+        <p>Generates detailed test cases directly from Python docstrings, reducing manual effort and increasing accuracy.</p>
+    </div>
+    <div class="feature">
+        <h2>Test Coverage Reporting</h2>
+        <p>Provides insights into test coverage for the generated test cases to identify any gaps in testing.</p>
+    </div>
+    <div class="feature">
+        <h2>Customizable Test Case Templates</h2>
+        <p>Allows users to define custom templates for test case generation to match their coding standards.</p>
+    </div>
+    <div class="feature">
+        <h2>Integration with CI/CD Pipelines</h2>
+        <p>Seamlessly integrates with popular CI/CD tools to automate the test execution process post code commits.</p>
+    </div>
+    <div class="feature">
+        <h2>Verbose Output Mode</h2>
+        <p>Offers detailed logging of generated test cases and any issues encountered during generation for easier debugging.</p>
+    </div>
+</section>
+
+<div class="cta">
+    <button onclick="alert('Get Started with AutoTest!')">Get Started Now</button>
+</div>
+
+<footer>
+    <p>&copy; 2023 AutoTest. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
