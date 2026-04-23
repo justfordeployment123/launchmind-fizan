@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoTest - Simplifying Python Testing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 50px 20px;
+            background: #f4f4f4;
+        }
+        .feature {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px;
+            width: 300px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .cta {
+            margin: 40px 0;
+            text-align: center;
+        }
+        .cta button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: white;
+            background: #4e54c8;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .cta button:hover {
+            background: #383fbb;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+        }
+        @media (max-width: 600px) {
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+            .feature {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Welcome to AutoTest</h1>
+    <h2>Simplifying the Testing Process for Python Developers</h2>
+</header>
+
+<section class="features">
+    <div class="feature">
+        <h3>Docstring Parsing</h3>
+        <p>Automatically reads and interprets Python docstrings to extract function details and expected behaviors.</p>
+    </div>
+    <div class="feature">
+        <h3>Test Case Generation</h3>
+        <p>Generates comprehensive and well-structured test cases based on the parsed docstrings, covering various input scenarios.</p>
+    </div>
+    <div class="feature">
+        <h3>Integration with CI/CD</h3>
+        <p>Seamlessly integrates with popular CI/CD tools to automate the execution of generated test cases during the build process.</p>
+    </div>
+    <div class="feature">
+        <h3>Customization Options</h3>
+        <p>Allows users to customize the generated test cases with additional parameters, ensuring flexibility for different coding styles.</p>
+    </div>
+    <div class="feature">
+        <h3>Reporting Dashboard</h3>
+        <p>Provides a user-friendly interface to visualize test results, coverage metrics, and potential issues in the codebase.</p>
+    </div>
+</section>
+
+<div class="cta">
+    <button>Get Started with AutoTest</button>
+</div>
+
+<footer>
+    <p>&copy; 2023 AutoTest. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
